@@ -1,38 +1,49 @@
-﻿// Задача 62
+﻿// Задача 62. Напишите программу, которая заполнит спирально массив 4 на 4. 
+// Например, на выходе получается вот такой массив:
+// 01 02 03 04
+// 12 13 14 05
+// 11 16 15 06
+// 10 09 08 07
 
+// Решение под произвольный массив подсмотрел, полдня разбирал - как это гениально сделано .... 
 
-
-void ChangeMatrix(int[,] matrix)
+int ReadInt(string text)
 {
-    int temp = 0;
-    for (int j = 0; j < matrix.GetLength(1); j++)
-    {
-        temp = matrix[0, j];
-        matrix[0, j] = matrix[matrix.GetLength(0) - 1, j];
-        matrix[matrix.GetLength(0) - 1, j] = temp;
-    }
+    System.Console.WriteLine(text);
+    return Convert.ToInt16(Console.ReadLine());
 }
 
-//Генерация массива
-int[,] FillMatrix(int row, int col, int leftRange, int rightRange)
+int[,] Spiral(int n)
 {
-    int[,] tempMatrix = new int[row, col];
-    var rand = new Random();
-    for (int i = 0; i < tempMatrix.GetLength(0); i++)
+    int[,] result = new int[n, n];
+
+    int pos = 0; // заполнитель - увеличивающийся счетчик , с него вносится значение в массив
+    int count = n; // текущий размер заполняемого массива - потом остающийся к заполнению 
+    int value = -n; // направление заполнения - +1 - вправо, +4 - вниз, -1 - влево, -4 - вверх
+    int sum = -1; // опеределитель строки и столбца - остаток деления на размер массива - строка, остаток по модулю - столбец
+
+    while (count > 0)
     {
-        for (int j = 0; j < tempMatrix.GetLength(1); j++)
+        value = -1 * value / n;   // начало с 1, хитрый генератор направляения движения, переворот после каждого цикла на обратное направление 
+        for (int i = 0; i < count; i++) // бежим по прямой до конца первой строки и потом вниз, пока value больше нуля
         {
-            tempMatrix[i, j] = rand.Next(leftRange, rightRange + 1);
+            sum += value; // счетчик позиции - остаток растет по столбцам
+            result[sum / n, sum % n] = pos++; // заполняем массив , генерируя координаты с помощб. числа value 
+        // System.Console.WriteLine($" 1 value - count - pos - sum  {value} - {count} - {pos} - {sum} ячейка {sum/n} {sum%n}");
+        }
+        value *= n; // счетчик позиции - учеличиваем на размер массива , чтобы поменять направление движения вниз (потом делим на него и по остатку вычисляем координаты)
+        count--; // уменьшаем остаток размера массива на 1 (4х4 -> 3х3)
+        for (int i = 0; i < count; i++) // бегаем по оставшемуся незаполненному массиву
+        {
+            sum += value; // добавляем сразу + размер массива, чтобы после деления на него менялась строка, а не столбец
+            result[sum / n, sum % n] = pos++; // двигаемся вниз при положительном value и вверх при отрицательном
+            // System.Console.WriteLine($" 2 value - count - pos - sum  {value} - {count} - {pos} - {sum}  ячейка {sum/n} {sum%n}");
         }
     }
-    return tempMatrix;
+
+    return result;
 }
-//Ввод данных
-int[] ReadInt(string text)
-{
-    System.Console.Write(text);
-    return Array.ConvertAll(Console.ReadLine()!.Split(","), int.Parse); ;
-}
+
 // Печать двумерного массива
 void PrintMatrix(int[,] matrix)
 {
@@ -46,12 +57,9 @@ void PrintMatrix(int[,] matrix)
     }
 }
 //..........................
-int[] size = ReadInt("Задайте количество строк и столбцов через запятую: ");
-int[] range = ReadInt("Задайте левую и правую границы массива через запятую:  ");
-int[,] matrix = FillMatrix(size[0], size[1], range[0], range[1]);
 
-PrintMatrix(matrix);
+int N = ReadInt("Введите размер квадратного массива ");
 
-ChangeMatrix(matrix);
-System.Console.WriteLine("");
+int[,] matrix = Spiral(N);
+
 PrintMatrix(matrix);

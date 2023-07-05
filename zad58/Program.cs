@@ -21,30 +21,26 @@ bool TestMatrix(int[,] m1, int[,] m2)
 
 int[,] MatrixMultiplication(int[,] m1, int[,] m2)
 {
-    int row1 = m1.GetLength(0);
-    int col1 = m1.GetLength(1);
+    int row = m1.GetLength(0);
+    int col = m2.GetLength(1);
     // создаем результирующий массив - размер - по количеству строк исходного
-    int[,] resultMatrix = new int[row1, row1];
+    int[,] resultMatrix = new int[row, row];
 
-    // задаем индексы для результирующей матрицы
-   
-    
-    for (int col3 = 0; col3 < row1; col3++)
+    // по индексам  результирующей матрицы
+
+    for (int i = 0; i < row; i++) // в пределах строк первой матрицы
     {
-         int row3 = 0;
-        for (int i = 0; i < row1; i++)
+        for (int j = 0; j < col; j++) // проходим по размеру второй матрицы - столбцам ]
         {
-            int sum = 0;
-            for (int j = 0; j < col1; j++)
+
+            for (int k = 0; k < row; k++) // проходим циклом по каждой строке для подсчета сумм произведений]
             {
-                sum = sum + m1[i, j] * m2[j, i];
+                resultMatrix[i, j] += m1[i, k] * m2[k, j];
             }
-            resultMatrix[row3, col3] = sum;
-            // PrintMatrix(resultMatrix);
-            // System.Console.WriteLine(sum);
-        row3++;   
+
         }
-        
+
+
     }
     return resultMatrix;
 }
@@ -109,6 +105,7 @@ System.Console.WriteLine("Второй массив:");
 PrintMatrix(matrix2);
 System.Console.WriteLine("");
 
+//  просто для возможности проверки правильности длин массивов - как опция
 if (TestMatrix(matrix1, matrix2) == false)
 {
     System.Console.WriteLine("Эти матрицы не могут быть перемножены");
